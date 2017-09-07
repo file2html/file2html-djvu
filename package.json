@@ -1,0 +1,36 @@
+{
+  "name": "file2html-djvu",
+  "version": "1.0.0",
+  "description": "DjVu engine for file2html",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib/*.*",
+    "lib/**/*.*"
+  ],
+  "scripts": {
+    "test": "./node_modules/.bin/jest --no-cache --config=./node_modules/file2html-dev-tools/jest/config.json",
+    "lint": "./node_modules/.bin/tslint \"src/**/*.ts\" \"test/unit/**/*.ts\"",
+    "build": "npm run lint && rm -rf lib && ./node_modules/.bin/tsc"
+  },
+  "dependencies": {
+    "file2html": "^0.1.8"
+  },
+  "devDependencies": {
+    "file2html-dev-tools": "git+https://github.com/file2html/file2html-dev-tools.git#v1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/file2html/file2html-djvu.git"
+  },
+  "keywords": [
+    "file2html",
+    "djvu"
+  ],
+  "author": "webschik",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/file2html/file2html-djvu/issues"
+  },
+  "homepage": "https://github.com/file2html/file2html-djvu#readme"
+}
