@@ -34,7 +34,8 @@ export default class DjVuReader extends file2html.Reader {
 
             if (chunkId === 'FORMDJVM') {
                 const sharedData: SharedData = {};
-                const dirmChunkId: string = byteStream.readStr4();
+
+                byteStream.readStr4();
                 const dirmChunkSize: number = byteStream.readInt32();
 
                 byteStream.moveOffset(-8);
@@ -65,10 +66,7 @@ export default class DjVuReader extends file2html.Reader {
 
                     switch (chunkId) {
                         case 'FORMDJVU':
-                            content += readPage(
-                                byteStream.fork(chunkLength + 8),
-                                sharedData
-                            );
+                            content += readPage(byteStream.fork(chunkLength + 8), sharedData);
                             break;
                         case 'FORMDJVI':
                             sharedData[ids[i]] = readDjViChunk(byteStream.fork(length + 8));
@@ -79,7 +77,6 @@ export default class DjVuReader extends file2html.Reader {
                 }
             } else {
                 byteStream.moveOffset(-12);
-
                 content += readPage(byteStream.fork(firstChunkSize + 4));
             }
 

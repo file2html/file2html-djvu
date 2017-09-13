@@ -8,7 +8,6 @@ import {ColorChunk, readColorChunk} from './chunks/color-chunk';
 export function readPage (byteStream: ByteStream, sharedData?: SharedData): string {
     const info: InfoChunk = readInfoChunk(byteStream.fork(18));
     const infoChunks: IFFChunk[] = [info];
-    const chunks: IFFChunk[] = [];
     const dependencies: string[] = [];
     let fg44: ColorChunk;
     let bg44: ColorChunk;
@@ -60,7 +59,9 @@ export function readPage (byteStream: ByteStream, sharedData?: SharedData): stri
                 chunk = readIFFChunk(chunkByteStream);
         }
 
-        chunks.push(chunk);
+        if (sjbz) {
+            sjbz.decode(djbz);
+        }
     }
 
     return '';

@@ -25,7 +25,7 @@ export default class ZPDecoder {
         this.d = 0;
         this.f = Math.min(this.c, 0x7fff);
         this.ffzt = new Int8Array(256);
-        
+
         for (let i = 0; i < 256; i++) {
             this.ffzt[i] = 0;
 
@@ -33,11 +33,41 @@ export default class ZPDecoder {
                 this.ffzt[i] += 1;
             }
         }
-        
+
         this.delay = 25;
         this.scount = 0;
         this.buffer = 0;
         this.preload();
+    }
+
+    private ptdecode (z: number): number {
+        this.b = 0;
+
+        if (z > this.c) {
+            this.b = 1;
+            z = 0x10000 - z;
+            this.a += z;
+            this.c += z;
+
+            const shift: number = this.ffz(this.a);
+
+            this.scount -= shift;
+            this.a = 0xffff & (this.a << shift);
+            this.c = 0xffff & ((this.c << shift) | (this.buffer >> this.scount) & ((1 << shift) - 1));
+        } else {
+            this.b = 0;
+            this.scount--;
+            this.a = 0xffff & (z << 1);
+            this.c = 0xffff & ((this.c << 1) | ((this.buffer >> this.scount) & 1));
+        }
+
+        if (this.scount < 16) {
+            this.preload();
+        }
+
+        this.f = Math.min(this.c, 0x7fff);
+
+        return this.b;
     }
 
     preload () {
@@ -55,7 +85,7 @@ export default class ZPDecoder {
         if (!ctx) {
             return this.ptdecode(0x8000 + (this.a >> 1));
         }
-        
+
         this.b = ctx[n] & 1;
         this.z = this.a + pTypes[ctx[n]];
 
@@ -103,35 +133,5 @@ export default class ZPDecoder {
 
     decodeIW (): number {
         return this.ptdecode(0x8000 + ((this.a + this.a + this.a) >> 3));
-    }
-
-     private ptdecode (z: number): number {
-        this.b = 0;
-
-        if (z > this.c) {
-            this.b = 1;
-            z = 0x10000 - z;
-            this.a += z;
-            this.c += z;
-
-            const shift: number = this.ffz(this.a);
-
-            this.scount -= shift;
-            this.a = 0xffff & (this.a << shift);
-            this.c = 0xffff & ((this.c << shift) | (this.buffer >> this.scount) & ((1 << shift) - 1));
-        } else {
-            this.b = 0;
-            this.scount--;
-            this.a = 0xffff & (z << 1);
-            this.c = 0xffff & ((this.c << 1) | ((this.buffer >> this.scount) & 1));
-        }
-
-        if (this.scount < 16) {
-            this.preload();
-        }
-
-        this.f = Math.min(this.c, 0x7fff);
-
-        return this.b;
     }
 }
